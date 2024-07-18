@@ -148,7 +148,6 @@ function Personal_Page() {
     return (
         <div className='personal_main'>
             <div className='client_and_company'>{usernameDisplay}</div>
-            <div className='status'>{usernameStatus}</div>
             <div className='personal_text'>
                 Информация о комплектации и технических <br /> характеристиках Вашей техники
             </div>
