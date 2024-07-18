@@ -25,6 +25,7 @@ function Personal_Page() {
         if (isAuthenticated && userId) {
             setIsUserDataLoaded(true);
             fetchCarId(userId);
+
         }
     }, [isAuthenticated, userId]);
 

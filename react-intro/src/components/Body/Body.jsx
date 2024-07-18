@@ -10,6 +10,7 @@ function Body() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [selectedComponent, setSelectedComponent] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
 
   useEffect(() => {
     const getCars = async () => {
@@ -47,15 +48,40 @@ function Body() {
   };
 
   const openModal = (title, car) => {
-    setSelectedCar(car);
+    let content = '';
+
+    switch (title) {
+      case 'Модель техники':
+        content = car.technic_description;
+        break;
+      case 'Модель двигателя':
+        content = car.engine_description;
+        break;
+      case 'Модель трансмиссии':
+        content = car.transmission_description;
+        break;
+      case 'Модель ведущего моста':
+        content = car.driving_bridge_description;
+        break;
+      case 'Модель управляемого моста':
+        content = car.controlled_bridge_description;
+        break;
+      default:
+        content = 'Нет описания';
+    }
+
     setSelectedComponent(title);
+    setModalContent(content);
     setModalOpen(true);
   };
+
+    
 
   const closeModal = () => {
     setModalOpen(false);
     setSelectedCar(null);
     setSelectedComponent('');
+    setModalContent('');
   };
 
 
@@ -108,17 +134,17 @@ function Body() {
           <tbody>
             {filteredCars.map(car => (
               <tr key={car.id}>
-              <td>{car.car_number}</td>
-              <td className='clickable' onClick={() => openModal('Модель техники', car)}>{car.technic_name}</td>
-              <td className='clickable' onClick={() => openModal('Модель двигателя', car)}>{car.engine_name}</td>
-              <td>{car.engine_number}</td>
-              <td className='clickable' onClick={() => openModal('Модель трансмиссии', car)}>{car.transmission_name}</td>
-              <td>{car.transmission_number}</td>
-              <td className='clickable' onClick={() => openModal('Модель ведущего моста', car)}>{car.driving_bridge_name}</td>
-              <td>{car.driving_bridge_number}</td>
-              <td className='clickable' onClick={() => openModal('Модель управляемого моста', car)}>{car.controlled_bridge_name}</td>
-              <td>{car.controlled_bridge_number}</td>
-            </tr>
+                <td>{car.car_number}</td>
+                <td className='clickable' onClick={() => openModal('Модель техники', car)}>{car.technic_name}</td>
+                <td className='clickable' onClick={() => openModal('Модель двигателя', car)}>{car.engine_name}</td>
+                <td>{car.engine_number}</td>
+                <td className='clickable' onClick={() => openModal('Модель трансмиссии', car)}>{car.transmission_name}</td>
+                <td>{car.transmission_number}</td>
+                <td className='clickable' onClick={() => openModal('Модель ведущего моста', car)}>{car.driving_bridge_name}</td>
+                <td>{car.driving_bridge_number}</td>
+                <td className='clickable' onClick={() => openModal('Модель управляемого моста', car)}>{car.controlled_bridge_name}</td>
+                <td>{car.controlled_bridge_number}</td>
+              </tr>
             ))}
           </tbody>
         </table>     
@@ -127,7 +153,7 @@ function Body() {
       {modalOpen && (
         <Modal
           title={selectedComponent}
-          content={selectedCar[selectedComponent.toLowerCase() + '_description']}
+          content={modalContent}
           onClose={closeModal}
         />
       )}
@@ -141,7 +167,6 @@ function Modal({ title, content, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{title}</h2>
           <button className="close-button" onClick={onClose}>×</button>
         </div>
         <div className="modal-content">
