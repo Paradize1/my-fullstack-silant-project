@@ -16,7 +16,6 @@ function Body() {
     const getCars = async () => {
       try {
         const data = await fetchCars();
-        console.log('Полученные данные:', data);
         setCars(data);  
         setFilteredCars(data); // Инициализируем фильтрованные данные сразу после загрузки
       } catch (error) {
@@ -70,6 +69,7 @@ function Body() {
         content = 'Нет описания';
     }
 
+    setSelectedCar(car);
     setSelectedComponent(title);
     setModalContent(content);
     setModalOpen(true);
@@ -155,6 +155,7 @@ function Body() {
           title={selectedComponent}
           content={modalContent}
           onClose={closeModal}
+          selectedCar={selectedCar}
         />
       )}
 
@@ -162,7 +163,7 @@ function Body() {
   );
 }
 
-function Modal({ title, content, onClose }) {
+export function Modal({ title, content, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
@@ -176,5 +177,34 @@ function Modal({ title, content, onClose }) {
     </div>
   );
 }
+
+
+export function useModal() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [selectedComponent, setSelectedComponent] = useState('');
+
+  const openModal = (title, content) => {
+    setSelectedComponent(title);
+    setModalContent(content);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedComponent('');
+    setModalContent('');
+  };
+
+  return {
+    modalOpen,
+    modalContent,
+    selectedComponent,
+    openModal,
+    closeModal
+  };
+}
+
+
 
 export default Body;

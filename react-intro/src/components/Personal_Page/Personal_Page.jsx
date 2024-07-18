@@ -11,11 +11,16 @@ import AddToModal from './actions/AddToModal';
 import AddReclamationModal from './actions/AddReclamationModal';
 import AddGeneralInfoModal from './actions/AddGeneralInfoModal';
 
+
+
+
+
+
 function Personal_Page() {
     const { isAuthenticated, userId, usernameDisplay, usernameStatus } = useContext(AuthContext);
     const [activeTab, setActiveTab] = useState(null);
     const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
-    const [carId, setCarId] = useState(null); 
+    const [carId, setCarId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAddToModal, setShowAddToModal] = useState(false);
     const [showAddReclamationModal, setShowAddReclamationModal] = useState(false);
@@ -25,7 +30,6 @@ function Personal_Page() {
         if (isAuthenticated && userId) {
             setIsUserDataLoaded(true);
             fetchCarId(userId);
-
         }
     }, [isAuthenticated, userId]);
 
@@ -36,7 +40,8 @@ function Personal_Page() {
                 throw new Error('Failed to fetch car data');
             }
             const data = await response.json();
-            setCarId(data.carId); 
+            console.log('Received car data:', data);
+            setCarId(data.carId);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching car data:', error);
@@ -101,7 +106,11 @@ function Personal_Page() {
     };
 
     const handleAddGeneralInfo = () => {
-        setShowAddGeneralInfoModal(true);
+        if (usernameStatus === 'manager') {
+            setShowAddGeneralInfoModal(true);
+        } else {
+            alert('У вас нет доступа для добавления общей информации.');
+        }
     };
 
     const handleCloseAddGeneralInfoModal = () => {
@@ -110,19 +119,23 @@ function Personal_Page() {
 
     const handleSaveGeneralInfo = async (generalInfoData) => {
         try {
-            const response = await fetch('http://localhost:8000/api/add_general_info/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(generalInfoData),
-            });
+            if (usernameStatus === 'manager') {
+                const response = await fetch('http://localhost:8000/api/add_general_info/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(generalInfoData),
+                });
 
-            if (!response.ok) {
-                throw new Error('Failed to add general info data');
+                if (!response.ok) {
+                    throw new Error('Failed to add general info data');
+                }
+
+                handleCloseAddGeneralInfoModal();
+            } else {
+                alert('У вас нет доступа для добавления общей информации.');
             }
-
-            handleCloseAddGeneralInfoModal();
         } catch (error) {
             console.error('Error adding general info data:', error);
         }
@@ -137,9 +150,9 @@ function Personal_Page() {
             case 'info':
                 return <GeneralInfo />;
             case 'to':
-                return <TO carId={carId} />; 
+                return <TO carId={carId} />;
             case 'reclamacion':
-                return <Reclamations carId={carId} />; 
+                return <Reclamations carId={carId} />;
             default:
                 return null;
         }
@@ -148,14 +161,21 @@ function Personal_Page() {
     return (
         <div className='personal_main'>
             <div className='client_and_company'>{usernameDisplay}</div>
+            <div className='status'>{usernameStatus}</div>
             <div className='personal_text'>
                 Информация о комплектации и технических <br /> характеристиках Вашей техники
             </div>
 
             <div className='personal_buttons'>
-                <button className='button_info' onClick={() => setActiveTab('info')}>общая инфо</button>
-                <button className='button_to' onClick={() => setActiveTab('to')}>ТО</button>
-                <button className='button_reclamac' onClick={() => setActiveTab('reclamacion')}>рекламации</button>
+                    <button className='button_info' onClick={() => setActiveTab('info')}>
+                        общая инфо
+                    </button>
+                <button className='button_to' onClick={() => setActiveTab('to')}>
+                    ТО
+                </button>
+                <button className='button_reclamac' onClick={() => setActiveTab('reclamacion')}>
+                    рекламации
+                </button>
             </div>
 
             {(usernameStatus === 'client' || usernameStatus === 'service' || usernameStatus === 'manager') && (
@@ -172,11 +192,7 @@ function Personal_Page() {
 
             {loading ? <div className='loader'>Загрузка...</div> : renderContent()}
 
-            <AddToModal
-                showModal={showAddToModal}
-                onClose={handleCloseAddToModal}
-                onSave={handleSaveTO}
-            />
+            <AddToModal showModal={showAddToModal} onClose={handleCloseAddToModal} onSave={handleSaveTO} />
 
             <AddReclamationModal
                 showModal={showAddReclamationModal}
@@ -189,12 +205,10 @@ function Personal_Page() {
                 onClose={handleCloseAddGeneralInfoModal}
                 onSave={handleSaveGeneralInfo}
             />
-
         </div>
     );
 }
 
 export default Personal_Page;
-
 
 

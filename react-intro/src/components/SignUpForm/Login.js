@@ -1,4 +1,6 @@
 // login.js
+
+// Добавляем импорт для использования AuthContext и useNavigate
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../services/AuthContext';
@@ -27,9 +29,18 @@ const useLogin = () => {
                     localStorage.setItem('userId', data.id);
                     localStorage.setItem('username_display', data.username_display);
                     localStorage.setItem('usernameStatus', data.status);
+                    localStorage.setItem('userLocalId', data.user_id ? data.user_id.toString() : 'null'); // Убедитесь, что значение правильно установлено
+                    console.log('simple id', data.id);
+                    console.log('local id', data.user_id);
 
-                    login(data.username_display, data.id, data.status); // Вызов функции login с username_display и status
+                    login(data.username_display, data.id, data.status); // Не передаем userLocalId
+                    
+                    console.log('Stored local id:', localStorage.getItem('userLocalId'));
+
+                    
                     navigate('/Personal_Page');
+
+                    return data;
                 } else {
                     setError('Server response does not contain user profile id');
                 }
@@ -46,10 +57,13 @@ const useLogin = () => {
         navigate('/');
     };
 
+    // Возвращаемые данные из хука useLogin
     return { error, login: handleLogin, logout: handleLogout };
 };
 
+// Экспортируем хук useLogin по умолчанию
 export default useLogin;
 
 
-
+const AllUserInfo = {};
+export { AllUserInfo };

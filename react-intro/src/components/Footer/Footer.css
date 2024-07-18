@@ -11,7 +11,10 @@
     justify-content: space-around;
 }
 
-
+.footer_img img {
+    height: 50px;
+    width: auto; /* Или конкретная ширина, если нужно */
+}
 
 
 @media screen and (max-width: 440px) {

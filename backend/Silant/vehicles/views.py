@@ -83,6 +83,7 @@ def login_view(request):
             'status': profile.status,
             'car': car_serializer.data,  # Возвращаем данные машины в формате JSON
             'username_display': profile.username_display,
+            'user_id': profile.user.id,
         })
     else:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

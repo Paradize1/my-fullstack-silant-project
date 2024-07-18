@@ -1,27 +1,20 @@
 // Reclamations.jsx
 
 import React, { useState, useEffect } from 'react';
-import { fetchReclamationsData } from './Main_Info';
-import {getMaintenancecarName, getrecoverymethodName } from './Utils';
+import { GetReclamationsInfo, userReclamationsData } from './MainScripts'; // Исправляем имя переменной
+import { getMaintenancecarName, getrecoverymethodName } from './Utils';
 
-const Reclamations = ({ carId }) => {
+const Reclamations = () => {
     const [reclamationsData, setReclamationsData] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchReclamationsData(carId);
-            setReclamationsData(data);
-            console.log('all: ', data)
-
-           
-
+            await GetReclamationsInfo(); // Используем правильную функцию
+            setReclamationsData(userReclamationsData); // Используем правильную переменную
         };
+
         fetchData();
-    }, [carId]);
-
-
-    const filteredReclamations = reclamationsData.filter(item => item.car === 1);
-    console.log('фильтр: ', filteredReclamations)
+    }, []);
 
     return (
         <div>
@@ -40,7 +33,7 @@ const Reclamations = ({ carId }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredReclamations.map(item => (
+                    {reclamationsData.map(item => (
                         <tr key={item.id}>
                             <td>{getMaintenancecarName(item.car)}</td>
                             <td>{item.date_failure}</td>
@@ -48,7 +41,6 @@ const Reclamations = ({ carId }) => {
                             <td>{item.node_failure}</td>
                             <td>{item.description_failure}</td>
                             <td>{getrecoverymethodName(item.method_recovery)}</td>
-
                             <td>{item.repair_parts}</td>
                             <td>{item.date_recovery}</td>
                             <td>{item.time}</td>
@@ -61,6 +53,8 @@ const Reclamations = ({ carId }) => {
 };
 
 export default Reclamations;
+
+
 
 
 
