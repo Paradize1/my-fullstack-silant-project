@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { fetchMaintenanceData } from './Main_Info';
-import {getServiceCompanyName, getMaintenanceTypeName, getMaintenancecarName } from './Utils';
+import { getServiceCompanyName, getMaintenanceTypeName, getMaintenancecarName } from './Utils';
 
 const TO = ({ carId }) => {
-    const [maintenanceData, setMaintenanceData] = useState([]);
-    const [userCarId, setUserCarId] = useState(null); // Переменная для хранения carId пользователя
-    const [allMaintenanceData, setAllMaintenanceData] = useState([]); // Переменная для всех данных ТО
+    const [allMaintenanceData, setAllMaintenanceData] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            setUserCarId(carId); // Устанавливаем carId пользователя
             const data = await fetchMaintenanceData(carId);
-            setMaintenanceData(data);
-            setAllMaintenanceData(data); // Сохраняем все данные ТО
+            setAllMaintenanceData(data);
         };
         fetchData();
     }, [carId]);
@@ -37,14 +33,12 @@ const TO = ({ carId }) => {
                     {filteredData.map(item => (
                         <tr key={item.id}>
                             <td>{getMaintenancecarName(item.car)}</td>
-
                             <td>{getMaintenanceTypeName(item.type)}</td>
                             <td>{item.date}</td>
                             <td>{item.operating_time}</td>
                             <td>{item.order_number}</td>
                             <td>{item.order_date}</td>
                             <td>{getServiceCompanyName(item.service_company)}</td>
-
                         </tr>
                     ))}
                 </tbody>

@@ -7,6 +7,7 @@ export const fetchCars = async () => {
     }
     const data = await response.json();
     console.log('Полученная информация:', data);
+
     return data;
   } catch (error) {
     console.error('Ошибка при запросе:', error);
